@@ -4,9 +4,11 @@ angular.module('ui.sortable.multiselection', [])
     'uiSortableMultiSelectionClass',
     function(selectedItemClass) {
       return {
-        link: function(scope, element/*, attrs*/) {
+        link: function(scope, element, attrs) {
           element.on('click', function (e) {
             var $this = angular.element(this);
+
+            var multiSelectOnClick = angular.isDefined(attrs.multiSelectOnClick);
 
             var $parent = $this.parent();
             var isDisabled = $parent.sortable('option', 'disabled');
@@ -24,7 +26,7 @@ angular.module('ui.sortable.multiselection', [])
             // Mimic jQuery UI Sortable's handle property when determining if an item is selected
             if (jquerySortableHandleOption) {
               var validHandle = false;
-              
+
               $parent.find(jquerySortableHandleOption).find('*').addBack().each(function () {
                 if (this === e.target) {
                   validHandle = true;
@@ -41,7 +43,7 @@ angular.module('ui.sortable.multiselection', [])
             var lastIndex = sortableMultiSelectState.lastIndex;
             var index = $this.index();
 
-            if (e.ctrlKey || e.metaKey) {
+            if (e.ctrlKey || e.metaKey || multiSelectOnClick) {
               $this.toggleClass(selectedItemClass);
             } else if (e.shiftKey && lastIndex !== undefined && lastIndex >= 0) {
               if (index > lastIndex) {
@@ -268,12 +270,12 @@ angular.module('ui.sortable.multiselection', [])
             // so that we can locate its position
             // after we remove the co-dragged elements
             var draggedModel = ngModel[newPosition];
-            
+
             // get the models and remove them from the list
             // the code should run in reverse order,
             // so that the indexes will not break
             var models = extractGroupedModelsFromIndexes(ngModel, indexes.above, indexes.below);
-          
+
             // add the models to the list
             Array.prototype.splice.apply(
               ngModel,
