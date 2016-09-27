@@ -4,14 +4,16 @@ angular.module('ui.sortable.multiselection', [])
     'uiSortableMultiSelectionClass',
     function(selectedItemClass) {
       return {
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           element.on('click', function (e) {
             var $this = angular.element(this);
 
-            var multiSelectOnClick = angular.isDefined(attrs.multiSelectOnClick);
-
             var $parent = $this.parent();
+
+            var multiSelectOnClick = $parent.sortable('option', 'multiSelectOnClick') || false;
+
             var isDisabled = $parent.sortable('option', 'disabled');
+
             if (isDisabled){
               return;
             }
